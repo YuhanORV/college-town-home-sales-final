@@ -304,6 +304,7 @@
     opt.grid.right = narrow() ? 64 : 96;
     opt.grid.bottom = 44;
     opt.xAxis = valueAxis(o.xName, o.axisFmt, o.xExtra);
+    if (narrow()) { opt.xAxis.splitNumber = 2; opt.xAxis.axisLabel.fontSize = 10.5; }
     opt.yAxis = catAxis(items.map(function (d) { return d.label; }), null, { axisLabel: { color: C['ink-2'], fontSize: narrow() ? 11 : 12 } });
     opt.tooltip = tooltipStyle({ formatter: function (p) { return o.tip(items[p.dataIndex]); } });
     opt.series = [{
@@ -863,10 +864,10 @@
     var id = 'ch-q3';
     clearEmpty(id);
     var n = items.length, nar = narrow();
-    var opt = baseOption('City rank by mean sale price: all rows vs valid prices', 'Rank 1 = highest mean · orange falls, teal rises, gray unchanged');
+    var opt = baseOption('City rank by mean sale price: all rows vs valid prices', 'Rank by mean sale price, 1 = highest · orange falls, teal rises, gray unchanged');
     opt.grid = { left: nar ? 124 : 196, right: nar ? 118 : 190, top: opt.grid.top + 18, bottom: 30 };
-    opt.xAxis = { type: 'category', data: ['All rows', 'Valid prices only'], position: 'top', boundaryGap: false, axisLine: { show: false }, axisTick: { show: false }, axisLabel: { color: C.ink, fontWeight: 700, fontSize: 12.5, margin: 14 } };
-    opt.yAxis = { type: 'value', inverse: true, min: 1, max: n, name: 'Rank by mean sale price (1 = highest)', nameLocation: 'middle', nameGap: 8, nameRotate: 90, nameTextStyle: { color: C.muted, fontSize: 12, fontWeight: 600 }, axisLabel: { show: false }, axisLine: { show: false }, axisTick: { show: false }, splitLine: { show: false } };
+    opt.xAxis = { type: 'category', data: nar ? ['All rows', 'Valid prices'] : ['Rank, all rows', 'Rank, valid prices'], position: 'top', boundaryGap: false, axisLine: { show: false }, axisTick: { show: false }, axisLabel: { interval: 0, color: C.ink, fontWeight: 700, fontSize: nar ? 11.5 : 12.5, margin: 14 } };
+    opt.yAxis = { type: 'value', inverse: true, min: 1, max: n, show: false };
     opt.tooltip = tooltipStyle({ formatter: function (p) { var d = items[p.seriesIndex]; return tipHead(d.label) + tipRow('All rows', '#' + d.allRank + ' · ' + money(d.all)) + tipRow('Valid prices', '#' + d.validRank + ' · ' + money(d.valid)) + tipRow('Change', d.change === 0 ? 'none' : (d.change > 0 ? '+' : '−') + Math.abs(d.change)); } });
     opt.series = items.map(function (d) {
       var col = d.change < 0 ? C.accent : d.change > 0 ? C.second : C.quiet;
@@ -998,11 +999,11 @@
       (none.length ? ' No sales at this size in ' + listJoin(none.map(function (d) { return d.label; })) + '.' : '') +
       (withSales.some(function (d) { return d.n < 10; }) ? ' Medians based on fewer than 10 sales are less reliable.' : ''));
     hbar('ch-q7', {
-      title: 'Median sale price by city, ' + b + '-bedroom homes', sub: 'Lowest in orange · label shows median and number of sales',
+      title: 'Median sale price by city, ' + b + '-bedroom homes', sub: narrow() ? 'Lowest in orange · label: median price · number of sales' : 'Lowest in orange · label shows median and number of sales',
       items: withSales.slice().sort(function (a, b) { return b.value - a.value || a.label.localeCompare(b.label); }), xName: 'Median sale price', axisFmt: moneyShort,
-      label: function (d) { return money(d.value) + '  ·  ' + num(d.n) + (d.n === 1 ? ' sale' : ' sales'); },
+      label: function (d) { return narrow() ? moneyShort(d.value) + ' · ' + num(d.n) : money(d.value) + '  ·  ' + num(d.n) + (d.n === 1 ? ' sale' : ' sales'); },
       tip: function (d) { return tipHead(d.label) + tipRow('Median sale price', money(d.value)) + tipRow('Sales', num(d.n)); },
-      extend: function (opt) { opt.grid.right = narrow() ? 132 : 170; }
+      extend: function (opt) { opt.grid.right = narrow() ? 86 : 170; }
     });
   }
 
@@ -1025,11 +1026,11 @@
       'Slowest: ' + withSales[0].label + ' at ' + days(withSales[0].value) + '. ' + num(total) + ' sales with both a list and contract date are used.' +
       (none.length ? ' No usable sales in ' + listJoin(none.map(function (d) { return d.label; })) + '.' : ''));
     hbar('ch-q8', {
-      title: 'Median days on market by city, ' + moneyShort(lo) + ' to ' + moneyShort(hi), sub: 'Shortest in orange · label shows median days and number of sales used',
+      title: 'Median days on market by city, ' + moneyShort(lo) + ' to ' + moneyShort(hi), sub: narrow() ? 'Shortest in orange · label: median days (d) · sales used' : 'Shortest in orange · label shows median days and number of sales used',
       items: withSales, xName: 'Median days on market', axisFmt: function (v) { return v; },
-      label: function (d) { return dec1(d.value) + ' days  ·  ' + num(d.n) + (d.n === 1 ? ' sale' : ' sales'); },
+      label: function (d) { return narrow() ? dec1(d.value) + ' d · ' + num(d.n) : dec1(d.value) + ' days  ·  ' + num(d.n) + (d.n === 1 ? ' sale' : ' sales'); },
       tip: function (d) { return tipHead(d.label) + tipRow('Median days on market', dec1(d.value)) + tipRow('Sales used', num(d.n)); },
-      extend: function (opt) { opt.grid.right = narrow() ? 132 : 160; }
+      extend: function (opt) { opt.grid.right = narrow() ? 78 : 160; }
     });
   }
 
