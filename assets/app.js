@@ -332,12 +332,12 @@
     for (i = 0; i < N; i++) if (VALID[i] && D.dom[i] != null) dom.push(D.dom[i]);
     var first = null, last = null;
     for (i = 0; i < N; i++) { var s = D.sale_date[i]; if (!s) continue; if (!first || s < first) first = s; if (!last || s > last) last = s; }
-    var fmtD = function (s) { var d = new Date(s + 'T00:00:00'); return MON[d.getMonth()] + ' ' + d.getFullYear(); };
+    var fmtD = function (s) { return MON[+s.slice(5, 7) - 1] + ' ’' + s.slice(2, 4); };
     $('hero-stats').innerHTML = [
       ['Home sales', num(N)],
       ['Median sale price', money(median(prices))],
       ['Median days on market', days(median(dom))],
-      ['Sale dates', fmtD(first) + ' – ' + fmtD(last)]
+      ['Sale dates covered', fmtD(first) + ' – ' + fmtD(last)]
     ].map(function (s) { return '<div class="hero-stat"><span class="v">' + s[1] + '</span><span class="l">' + s[0] + '</span></div>'; }).join('');
   }
 
@@ -1147,6 +1147,20 @@
     renderQ1(); renderQ2(); renderQ3(); renderQ4(); renderQ5(); renderQ6();
     renderQ7(); renderQ8(); renderQ9(); renderQ10();
     renderP1();
+    renderFindings();
+  }
+
+  // Four headline answers, linked to their questions. Computed, not typed.
+  function renderFindings() {
+    var q1 = tiedExtreme(Q.q1, 'value', true, 1), q4 = tiedExtreme(Q.q4, 'value', true, 10);
+    var fast = tiedExtreme(Q.q5, 'value', false, 10), q6 = tiedExtreme(Q.q6, 'value', true, 100);
+    var f = [
+      ['#q1', 'Most expensive', '<b>' + listJoin(q1.map(function (d) { return d.label; })) + '</b>, median ' + money(q1[0].value)],
+      ['#q4', 'Biggest 2024→25 rise', '<b>' + listJoin(q4.map(function (d) { return d.label; })) + '</b>, ' + spct(q4[0].value)],
+      ['#q5', 'Fastest to sell', fast.length > 1 ? '<b>' + fast.length + ' campus areas tie</b> at a median of ' + days(fast[0].value) : '<b>' + fast[0].label + '</b>, ' + days(fast[0].value)],
+      ['#q6', 'Heaviest property tax', '<b>' + listJoin(q6.map(function (d) { return d.label; })) + '</b>, ' + pct(q6[0].value, 2) + ' of price']
+    ];
+    $('findings').innerHTML = f.map(function (x) { return '<a class="finding" href="' + x[0] + '"><span class="k">' + x[1] + '</span><span>' + x[2] + '</span></a>'; }).join('');
   }
   function renderAll() {
     readColors();
@@ -1211,6 +1225,7 @@
         initMap();
         lastNarrow = narrow();
         renderAll();
+        if (S.loc) renderMap(true); // a shared link with a location opens zoomed to it
         $('loading').classList.add('done');
         window.__CM = { D: D, S: S, Q: Q, filteredRows: filteredRows, median: median, CITIES: CITIES, UNIS: UNIS };
       })

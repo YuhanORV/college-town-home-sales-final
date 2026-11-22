@@ -166,6 +166,18 @@ h3 { font-size: 1.15rem; font-family: var(--font-body); font-weight: 650; letter
 .hero-stat .v { font-family: var(--font-display); font-size: 1.7rem; font-weight: 650; display: block; line-height: 1.1; }
 .hero-stat .l { font-size: .82rem; color: var(--muted); }
 
+/* Key findings */
+.findings { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+.finding {
+  display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: var(--ink-2);
+  background: var(--surface-2); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 12px 14px; font-size: .88rem; line-height: 1.4;
+  transition: border-color .15s, transform .15s, background-color .15s;
+}
+.finding:hover { color: var(--ink-2); border-color: var(--accent); transform: translateY(-2px); background: var(--surface); }
+.finding .k { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-ink); }
+.finding b { color: var(--ink); font-weight: 650; }
+
 /* Sections */
 .section { padding: 56px 0; }
 .section-alt { background: var(--bg-alt); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -425,6 +437,7 @@ th[aria-sort="ascending"] .sort-btn svg, th[aria-sort="descending"] .sort-btn sv
   .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 960px) {
+  .findings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .topnav { display: none; }
   .topbar-actions { margin-left: auto; }
   .filters .features-group { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 16px; }
@@ -444,6 +457,7 @@ th[aria-sort="ascending"] .sort-btn svg, th[aria-sort="descending"] .sort-btn sv
   .hero { padding: 40px 0 24px; }
 }
 @media (max-width: 600px) {
+  .findings { grid-template-columns: minmax(0, 1fr); }
   .wrap { padding: 0 16px; }
   .topbar-inner { padding: 10px 16px; gap: 12px; }
   .btn-label { display: none; }
