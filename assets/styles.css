@@ -178,6 +178,7 @@ h3 { font-size: 1.15rem; font-family: var(--font-body); font-weight: 650; letter
 .card + .card { margin-top: 20px; }
 .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
 .card-head h3 { margin-bottom: 2px; }
+.card-head .btn { white-space: nowrap; flex: none; }
 
 /* Explore layout */
 .explore-grid { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; align-items: start; margin-bottom: 20px; }
@@ -273,7 +274,7 @@ input.invalid { border-color: var(--accent) !important; }
 /* KPIs */
 .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); min-width: 0; }
-.kpi .l { font-size: .76rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.kpi .l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; font-size: .74rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
 .kpi .v { font-family: var(--font-display); font-size: 1.55rem; font-weight: 650; line-height: 1.2; display: block; margin-top: 4px; overflow-wrap: anywhere; }
 .kpi .s { font-size: .78rem; color: var(--muted); }
 .kpi.lead { background: var(--ink); border-color: var(--ink); }
@@ -335,7 +336,7 @@ input.invalid { border-color: var(--accent) !important; }
 .data-table th, .data-table td { text-align: right; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
 .data-table th:first-child, .data-table td:first-child { text-align: left; }
 .data-table td.text, .data-table th.text { text-align: left; }
-.data-table thead th { font-size: .76rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--line-strong); padding: 0; position: sticky; top: 0; background: var(--surface); }
+.data-table thead th { white-space: normal; vertical-align: bottom; line-height: 1.25; font-size: .74rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--line-strong); padding: 0; position: sticky; top: 0; background: var(--surface); }
 .data-table thead th.static { padding: 10px 12px; }
 .sort-btn {
   display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: flex-end;

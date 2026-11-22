@@ -543,11 +543,11 @@
     }
     var s = summarize(rowsCache);
     el.innerHTML = [
-      ['Median sale price', money(s.median), 'Mean ' + money(s.mean), true],
+      ['Median price', money(s.median), 'Mean ' + money(s.mean), true],
       ['Sales', num(s.n), 'of ' + num(N) + ' in the dataset'],
-      ['Median days on market', days(s.dom), num(s.domN) + ' sales with both dates'],
-      ['Median price / sq ft', s.ppsf == null ? '–' : money(s.ppsf), 'Homes with living area above 0'],
-      ['Median distance', s.miles == null ? '–' : dec1(s.miles) + ' mi', 'Straight line to campus']
+      ['Days on market', days(s.dom), 'Median, ' + num(s.domN) + ' sales with dates'],
+      ['Price per sq ft', s.ppsf == null ? '–' : money(s.ppsf), 'Median, living area above 0'],
+      ['To campus', s.miles == null ? '–' : s.miles.toFixed(1) + ' mi', 'Median straight-line distance']
     ].map(function (k) {
       return '<div class="kpi' + (k[3] ? ' lead' : '') + '"><span class="l">' + k[0] + '</span><span class="v">' + k[1] + '</span><span class="s">' + k[2] + '</span></div>';
     }).join('');
@@ -689,7 +689,7 @@
       ['Median days on market', 'dom', days],
       ['Median price per sq ft', 'ppsf', money],
       ['Median living area', 'sqft', function (v) { return v == null ? '–' : num(v) + ' sq ft'; }],
-      ['Median distance to campus', 'miles', function (v) { return v == null ? '–' : dec1(v) + ' mi'; }]
+      ['Median distance to campus', 'miles', function (v) { return v == null ? '–' : v.toFixed(1) + ' mi'; }]
     ];
     var h = '<div class="cmp-row head"><span class="cmp-metric">Metric</span><span><span class="swatch swatch-a"></span>' + esc(locLabel(S.ca)) + '</span><span><span class="swatch swatch-b"></span>' + esc(locLabel(S.cb)) + '</span></div>';
     metrics.forEach(function (m) {
@@ -715,7 +715,7 @@
     { k: 'mean', t: 'Mean price', f: money },
     { k: 'dom', t: 'Median days on market', f: function (v) { return v == null ? '–' : dec1(v); } },
     { k: 'ppsf', t: 'Median $ / sq ft', f: money },
-    { k: 'miles', t: 'Median miles', f: function (v) { return v == null ? '–' : dec1(v); } }
+    { k: 'miles', t: 'Median miles to campus', f: function (v) { return v == null ? '–' : v.toFixed(1); } }
   ];
   var SORT_ICON = {
     none: '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5 6l3-3 3 3M5 10l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -818,14 +818,14 @@
     var id = 'ch-q2';
     clearEmpty(id);
     var rev = items.slice().reverse();
-    var opt = baseOption('Mean vs median sale price by city, all rows', 'Sorted by gap · label = (mean − median) ÷ median · largest gap in orange');
+    var opt = baseOption('Mean vs median sale price by city, all rows', 'Each row runs from the median dot to the mean dot · label = (mean − median) ÷ median · largest gap in orange');
     opt.grid.right = narrow() ? 58 : 80; opt.grid.bottom = 44;
     var t0 = opt.grid.top - 18;
     opt.legend = { top: t0, right: 0, itemWidth: 10, itemHeight: 10, textStyle: { color: C.muted, fontSize: 12 }, data: ['Median', 'Mean'] };
     opt.grid.top = t0 + 30;
     opt.xAxis = valueAxis('Sale price (all rows)', moneyShort, { min: function (v) { return Math.floor(v.min / 100000) * 100000; } });
     opt.yAxis = catAxis(rev.map(function (d) { return d.label; }), null, { axisLabel: { color: C['ink-2'], fontSize: narrow() ? 11 : 12 } });
-    opt.tooltip = tooltipStyle({ formatter: function (p) { var d = rev[p.dataIndex]; return tipHead(d.label) + tipRow('Mean', money(d.mean), C.accent) + tipRow('Median', money(d.median), C.ink) + tipRow('Gap', pct(d.gap)) + tipRow('Sales (all rows)', num(d.n)); } });
+    opt.tooltip = tooltipStyle({ formatter: function (p) { var d = rev[p.dataIndex]; return tipHead(d.label) + tipRow('Mean', money(d.mean), isTop(d) ? C.accent : C.second) + tipRow('Median', money(d.median), C.ink) + tipRow('Gap', pct(d.gap)) + tipRow('Sales (all rows)', num(d.n)); } });
     var isTop = function (d) { return top.indexOf(d) >= 0; };
     opt.series = [
       { type: 'custom', name: 'gap', silent: true, renderItem: function (params, api) {
@@ -834,8 +834,8 @@
         }, data: rev.map(function (d) { return [d.median, d.mean]; }), encode: { x: [0, 1] }, z: 1 },
       { type: 'scatter', name: 'Median', symbolSize: 11, data: rev.map(function (d) { return d.median; }), itemStyle: { color: C.ink, borderColor: C.surface, borderWidth: 1.5 }, z: 3 },
       { type: 'scatter', name: 'Mean', symbolSize: 11, z: 4,
-        data: rev.map(function (d) { return { value: d.mean, itemStyle: { color: isTop(d) ? C.accent : C.quiet, borderColor: C.surface, borderWidth: 1.5 } }; }),
-        itemStyle: { color: C.accent },
+        data: rev.map(function (d) { return { value: d.mean, itemStyle: { color: isTop(d) ? C.accent : C.second, borderColor: C.surface, borderWidth: 1.5 } }; }),
+        itemStyle: { color: C.second },
         label: { show: true, position: 'right', distance: 8, fontSize: narrow() ? 10.5 : 11.5, fontWeight: 600, color: C['ink-2'],
           formatter: function (p) { return '+' + rev[p.dataIndex].gap.toFixed(1) + '%'; } } }
     ];
@@ -864,9 +864,9 @@
     clearEmpty(id);
     var n = items.length, nar = narrow();
     var opt = baseOption('City rank by mean sale price: all rows vs valid prices', 'Rank 1 = highest mean · orange falls, teal rises, gray unchanged');
-    opt.grid = { left: nar ? 118 : 190, right: nar ? 118 : 190, top: opt.grid.top + 18, bottom: 30 };
+    opt.grid = { left: nar ? 124 : 196, right: nar ? 118 : 190, top: opt.grid.top + 18, bottom: 30 };
     opt.xAxis = { type: 'category', data: ['All rows', 'Valid prices only'], position: 'top', boundaryGap: false, axisLine: { show: false }, axisTick: { show: false }, axisLabel: { color: C.ink, fontWeight: 700, fontSize: 12.5, margin: 14 } };
-    opt.yAxis = { type: 'value', inverse: true, min: 1, max: n, show: false, name: 'Rank' };
+    opt.yAxis = { type: 'value', inverse: true, min: 1, max: n, name: 'Rank by mean sale price (1 = highest)', nameLocation: 'middle', nameGap: 8, nameRotate: 90, nameTextStyle: { color: C.muted, fontSize: 12, fontWeight: 600 }, axisLabel: { show: false }, axisLine: { show: false }, axisTick: { show: false }, splitLine: { show: false } };
     opt.tooltip = tooltipStyle({ formatter: function (p) { var d = items[p.seriesIndex]; return tipHead(d.label) + tipRow('All rows', '#' + d.allRank + ' · ' + money(d.all)) + tipRow('Valid prices', '#' + d.validRank + ' · ' + money(d.valid)) + tipRow('Change', d.change === 0 ? 'none' : (d.change > 0 ? '+' : '−') + Math.abs(d.change)); } });
     opt.series = items.map(function (d) {
       var col = d.change < 0 ? C.accent : d.change > 0 ? C.second : C.quiet;
@@ -999,10 +999,10 @@
       (withSales.some(function (d) { return d.n < 10; }) ? ' Medians based on fewer than 10 sales are less reliable.' : ''));
     hbar('ch-q7', {
       title: 'Median sale price by city, ' + b + '-bedroom homes', sub: 'Lowest in orange · label shows median and number of sales',
-      items: withSales.slice().reverse().reverse().sort(function (a, b) { return b.value - a.value; }), xName: 'Median sale price', axisFmt: moneyShort,
-      label: function (d) { return money(d.value) + '  ·  ' + num(d.n); },
+      items: withSales.slice().sort(function (a, b) { return b.value - a.value || a.label.localeCompare(b.label); }), xName: 'Median sale price', axisFmt: moneyShort,
+      label: function (d) { return money(d.value) + '  ·  ' + num(d.n) + (d.n === 1 ? ' sale' : ' sales'); },
       tip: function (d) { return tipHead(d.label) + tipRow('Median sale price', money(d.value)) + tipRow('Sales', num(d.n)); },
-      extend: function (opt) { opt.grid.right = narrow() ? 104 : 140; }
+      extend: function (opt) { opt.grid.right = narrow() ? 132 : 170; }
     });
   }
 
@@ -1026,10 +1026,10 @@
       (none.length ? ' No usable sales in ' + listJoin(none.map(function (d) { return d.label; })) + '.' : ''));
     hbar('ch-q8', {
       title: 'Median days on market by city, ' + moneyShort(lo) + ' to ' + moneyShort(hi), sub: 'Shortest in orange · label shows median days and number of sales used',
-      items: withSales.slice().sort(function (a, b) { return b.value - a.value || b.label.localeCompare(a.label); }).reverse().reverse(), xName: 'Median days on market', axisFmt: function (v) { return v; },
-      label: function (d) { return dec1(d.value) + ' d  ·  ' + num(d.n); },
+      items: withSales, xName: 'Median days on market', axisFmt: function (v) { return v; },
+      label: function (d) { return dec1(d.value) + ' days  ·  ' + num(d.n) + (d.n === 1 ? ' sale' : ' sales'); },
       tip: function (d) { return tipHead(d.label) + tipRow('Median days on market', dec1(d.value)) + tipRow('Sales used', num(d.n)); },
-      extend: function (opt) { opt.grid.right = narrow() ? 96 : 120; }
+      extend: function (opt) { opt.grid.right = narrow() ? 132 : 160; }
     });
   }
 
@@ -1069,14 +1069,14 @@
     }
     var med = median(miles);
     setAnswer('q10', 'In the <strong>' + esc(S.q10u) + '</strong> campus area, <strong>' + num(miles.length) + '</strong> sale' + (miles.length === 1 ? '' : 's') + ' cost ' + money(budget) + ' or less' + scopeNote + ' and had at least ' + mb + ' bedroom' + (mb === 1 ? '' : 's') + '. ' +
-      'Their median distance to campus is <strong class="hl">' + dec1(med) + ' miles</strong> (straight line to the campus landmark).');
+      'Their median distance to campus is <strong class="hl">' + med.toFixed(1) + ' miles</strong> (straight line to the campus landmark).');
     clearEmpty(id);
     var step = 0.5, nb = Math.ceil((Math.max.apply(null, miles) + 1e-9) / step) || 1;
     var bins = new Array(nb).fill(0);
     miles.forEach(function (m) { bins[Math.min(nb - 1, Math.floor(m / step))]++; });
     var labels = bins.map(function (c, k) { return (k * step).toFixed(1) + '–' + ((k + 1) * step).toFixed(1); });
     var medBin = Math.min(nb - 1, Math.floor(med / step));
-    var opt = baseOption('Distance to campus of matching sales', 'Half-mile bins · bin with the median (' + dec1(med) + ' mi) in orange');
+    var opt = baseOption('Distance to campus of matching sales', 'Half-mile bins · the bin holding the median (' + med.toFixed(1) + ' mi) in orange');
     opt.grid.bottom = 40; opt.grid.right = 12;
     opt.xAxis = catAxis(labels, 'Miles to campus', { axisLabel: { color: C.muted, fontSize: 11, hideOverlap: true, formatter: function (v) { return v.split('–')[0]; } }, nameGap: 28 });
     opt.yAxis = valueAxis('Number of sales', function (v) { return num(v); }, { nameRotate: 90, nameGap: 40, minInterval: 1 }); opt.grid.top += 24;
@@ -1119,7 +1119,8 @@
     opt.legend = { top: t1, left: 0, itemWidth: 10, itemHeight: 10, textStyle: { color: C.muted, fontSize: 12 } };
     opt.grid.top = t1 + 30; opt.grid.right = 16; opt.grid.bottom = 44;
     var cats = top.map(function (d) { return d.label.replace(/, ..$/, ''); });
-    opt.xAxis = catAxis(cats, null, { axisLabel: { color: C['ink-2'], fontSize: 11, interval: 0, hideOverlap: false, rotate: narrow() ? 30 : 0 } });
+    opt.xAxis = catAxis(cats, 'City', { axisLabel: { color: C['ink-2'], fontSize: 11, interval: 0, hideOverlap: false, rotate: narrow() ? 30 : 0 }, nameGap: narrow() ? 52 : 30 });
+    if (narrow()) opt.grid.bottom = 64;
     opt.yAxis = valueAxis('Mean sale price', moneyShort, { nameRotate: 90, nameGap: 48, splitNumber: 4 }); opt.grid.top += 24;
     opt.tooltip = tooltipStyle({ trigger: 'axis', axisPointer: { type: 'shadow', shadowStyle: { color: C['quiet-2'], opacity: .4 } }, formatter: function (ps) { var d = top[ps[0].dataIndex]; return tipHead(d.label) + tipRow('All rows', money(d.all), C.quiet) + tipRow('Valid prices', money(d.valid), C.accent) + tipRow('Change', pct((d.valid - d.all) / d.all * 100)); } });
     opt.series = [
@@ -1130,8 +1131,10 @@
     chart(id).setOption(opt, true);
 
     var t = $('p1-table');
-    t.tHead.innerHTML = '<tr><th class="static">City</th><th class="static">Mean, all rows</th><th class="static">Mean, valid</th><th class="static">Rank</th></tr>';
-    t.tBodies[0].innerHTML = byChange.slice(0, 8).map(function (d) {
+    t.tHead.innerHTML = '<tr><th class="static">City</th><th class="static">Mean, all rows</th><th class="static">Mean, valid prices</th><th class="static">Rank change</th></tr>';
+    var tableRows = byChange.slice(0, 6); moved.forEach(function (d) { if (tableRows.indexOf(d) < 0) tableRows.push(d); });
+    tableRows.sort(function (a, b) { return a.allRank - b.allRank; });
+    t.tBodies[0].innerHTML = tableRows.map(function (d) {
       var rk = d.change === 0 ? '#' + d.validRank : '<span class="' + (d.change > 0 ? 'up' : 'down') + '">#' + d.allRank + ' → #' + d.validRank + '</span>';
       return '<tr><td>' + esc(d.label) + '</td><td>' + money(d.all) + '</td><td>' + money(d.valid) + '</td><td>' + rk + '</td></tr>';
     }).join('');
