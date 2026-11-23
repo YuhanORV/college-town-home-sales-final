@@ -329,24 +329,22 @@
         <article class="card prose-card" id="p2">
           <header class="q-head"><span class="q-tag q-tag-alt">P2</span><h3>Working with a coding agent instead of a notebook</h3></header>
           <div class="prose">
-            <p><strong>How I worked.</strong> I built this site with Claude Code running locally on my computer (model: Opus 5.5) instead of
-              writing pandas in a Jupyter notebook. I gave it the assignment and the data description sheet, and it produced a working
-              page with all ten questions, the filters and the map in one pass. My time went into checking numbers and judging the
-              design, not typing group-bys.</p>
-            <p><strong>What went faster.</strong> The interactive parts would have been far harder from a notebook: the shareable URL, the map
-              that filters every chart, the slider that stays in sync with its number inputs, dark mode, and a layout that works on a
-              phone are web problems, not pandas problems. In a notebook, Q7 to Q10 would be four widgets at best.</p>
-            <p><strong>What the agent got wrong, and how it was caught.</strong> The first version of the Q4 chart attached the campus names
-              to the wrong bars: the chart showed “UNC Chapel Hill” with the largest increase while the written answer said Illinois. It
-              was caught by reading the chart against the text and against a separate pandas calculation, and the chart was rebuilt.
-              Two outside services also failed on the first preview: the chart library link pointed to a file that does not exist on
-              the CDN, and the map tiles demanded an API key. Neither error is visible in code; both only showed up in the browser.</p>
-            <p><strong>How the numbers were checked.</strong> Every answer was computed twice, once in pandas from the raw CSV and once by the
-              site’s JavaScript, and compared, including Q7 to Q10 at nine different settings. That comparison is what makes the ties
-              trustworthy: Q5 has a four-way tie for fastest (7 days), and the default Q8 range ends in a three-way tie at 6 days.</p>
-            <p><strong>Which I prefer.</strong> A notebook is easier to audit, because each answer is one visible line of pandas, while the
-              agent wrote over a thousand lines of JavaScript I did not type. For building and presenting I prefer the agent, but only
-              with an independent notebook check beside it, because it is fast and confident even when it is wrong.</p>
+            <p><strong>How I worked.</strong> I built this site with Claude Code running locally (model: Opus 5.5) instead of writing
+              pandas in a Jupyter notebook. It produced a working page with all ten questions, the filters and the map in one pass, so
+              my time went into checking numbers and judging the design rather than typing group-bys.</p>
+            <p><strong>What went faster.</strong> The interactive parts would have been much harder from a notebook: the shareable URL, a
+              map that filters every chart, a slider kept in sync with its number inputs, dark mode, and a phone layout are web
+              problems, not pandas problems.</p>
+            <p><strong>What the agent got wrong.</strong> The first Q4 chart attached the campus names to the wrong bars: it showed
+              “UNC Chapel Hill” with the largest increase while the written answer said Illinois. I caught it by reading the chart
+              against the text and a separate pandas result, and the chart was rebuilt. On the first preview, the chart library link
+              also pointed to a file that does not exist and the map tiles demanded an API key; neither error was visible in the code.</p>
+            <p><strong>How the numbers were checked.</strong> Every answer was computed twice, in pandas from the raw CSV and in the
+              site’s JavaScript, and compared, including Q7 to Q10 at nine settings. That is what makes the ties trustworthy: Q5 has a
+              four-way tie at 7 days and the default Q8 range a three-way tie at 6 days.</p>
+            <p><strong>Which I prefer.</strong> A notebook is easier to audit, since each answer is one visible line of pandas. For
+              building and presenting I prefer the agent, but only with a notebook check beside it, because it is fast and confident
+              even when it is wrong.</p>
           </div>
         </article>
       </div>
