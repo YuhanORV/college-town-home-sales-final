@@ -28,3 +28,10 @@ Coding agent: Claude Code (desktop app, running locally), model Opus 5.5. One se
     and the first map tiles demanded an API key. Switched to a working CDN and a free base map.
   - Checked the layout at 375, 768 and 1400 px wide (no sideways scrolling), dark mode on every chart and the map, the
     empty-filter message, and that a copied link restores every filter.
+
+## 2026-11-22: Making P2 accurate
+
+- **Asked:** "P2能用agent直接生成吗，我现在讨论的是合规性问题" (Is an agent-written P2 allowed?), then "Yes, rewrite it".
+- **Agent produced:** Re-read the instructions: agents may write P2, but it must describe the student's own experience.
+  The earlier P2 said "I caught" the Q4 chart bug, but the agent caught it. Rewrote P2 so it states what the agent did and
+  what the student did and decided (285 words).

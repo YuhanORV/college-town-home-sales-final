@@ -330,21 +330,21 @@
           <header class="q-head"><span class="q-tag q-tag-alt">P2</span><h3>Working with a coding agent instead of a notebook</h3></header>
           <div class="prose">
             <p><strong>How I worked.</strong> I built this site with Claude Code running locally (model: Opus 5.5) instead of writing
-              pandas in a Jupyter notebook. It produced a working page with all ten questions, the filters and the map in one pass, so
-              my time went into checking numbers and judging the design rather than typing group-bys.</p>
-            <p><strong>What went faster.</strong> The interactive parts would have been much harder from a notebook: the shareable URL, a
-              map that filters every chart, a slider kept in sync with its number inputs, dark mode, and a phone layout are web
-              problems, not pandas problems.</p>
+              pandas in a Jupyter notebook. I gave it one instruction: read the assignment on Canvas and complete it step by step. It
+              wrote the code, the charts and the first drafts of this text; my part was approving, deciding and asking questions.</p>
+            <p><strong>What went faster.</strong> All ten questions, the filters and the map came out of one
+              session. The interactive parts (a shareable link, a map that filters every chart, dark mode, a phone layout) are web
+              problems I could not have built from a notebook in that time.</p>
             <p><strong>What the agent got wrong.</strong> The first Q4 chart attached the campus names to the wrong bars: it showed
-              “UNC Chapel Hill” with the largest increase while the written answer said Illinois. I caught it by reading the chart
-              against the text and a separate pandas result, and the chart was rebuilt. On the first preview, the chart library link
-              also pointed to a file that does not exist and the map tiles demanded an API key; neither error was visible in the code.</p>
-            <p><strong>How the numbers were checked.</strong> Every answer was computed twice, in pandas from the raw CSV and in the
-              site’s JavaScript, and compared, including Q7 to Q10 at nine settings. That is what makes the ties trustworthy: Q5 has a
-              four-way tie at 7 days and the default Q8 range a three-way tie at 6 days.</p>
-            <p><strong>Which I prefer.</strong> A notebook is easier to audit, since each answer is one visible line of pandas. For
-              building and presenting I prefer the agent, but only with a notebook check beside it, because it is fast and confident
-              even when it is wrong.</p>
+              “UNC Chapel Hill” with the largest increase while the written answer said Illinois. I did not spot this. The agent caught
+              it when it compared its chart with a separate pandas result, and rebuilt the chart. Later, when I asked whether an agent
+              may write this paragraph, it found that its own first draft had said <em>I</em> caught that bug, and rewrote it.</p>
+            <p><strong>What I decided.</strong> I let it use my GitHub account, chose to leave my Part 1 site unchanged after its
+              grade came out, and before submitting made it re-read the instructions and check every requirement; that check found this
+              paragraph was too long.</p>
+            <p><strong>Which I prefer.</strong> For building a site, the agent, by far. In a notebook I would understand each number
+              because I typed it; here I had to ask the agent to explain its work, and it is fast and confident even when it is wrong.
+              I would keep a notebook check beside it.</p>
           </div>
         </article>
       </div>
